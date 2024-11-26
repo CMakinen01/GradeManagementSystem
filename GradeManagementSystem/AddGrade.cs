@@ -45,7 +45,8 @@ namespace GradeManagementSystem
             //search the DB, if the student does not exist, exit process
             string connStr = "server=csitmariadb.eku.edu;user=student;database=csc340_db;port=3306;password=Maroon@21?;";
             MySql.Data.MySqlClient.MySqlConnection conn = new MySql.Data.MySqlClient.MySqlConnection(connStr);
-            // Step 1: Search for the student
+
+            //Search for the student
             try
             {
                 conn.Open();
@@ -53,6 +54,7 @@ namespace GradeManagementSystem
                 MySqlCommand cmd = new MySqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@StudentID", fixID);
 
+                //Error Handling
                 using (MySqlDataReader reader = cmd.ExecuteReader())
                 {
                     if (!reader.HasRows)
@@ -70,7 +72,7 @@ namespace GradeManagementSystem
                 return;
             }
 
-            // Step 2: Check for existing courses
+            //Check for existing courses
             try
             {
                 string checkCourseQuery = "SELECT * FROM courseinfo_camden440 WHERE subj_code = @subj AND crse_numb = @crse AND year = @year AND season = @season";
@@ -82,6 +84,7 @@ namespace GradeManagementSystem
 
                 using (MySqlDataReader readerCheckCourse = cmdCheckCourse.ExecuteReader())
                 {
+                    //Duplicate entry handling
                     if (readerCheckCourse.HasRows)
                     {
                         MessageBox.Show("This course already exists.", "Course Already Exists", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -97,7 +100,7 @@ namespace GradeManagementSystem
                 return;
             }
 
-            // Step 3: Insert into courseinfo_camden440 table
+            // Insert into Course table
             try
             {
                 string insertCourseQuery = "INSERT INTO courseinfo_camden440 (subj_code, crse_numb, year, season, hours) " +
@@ -119,7 +122,7 @@ namespace GradeManagementSystem
                 return;
             }
 
-            // Step 4: Retrieve the CRN from the courseinfo_camden440 table
+            //Retrieve the CRN from the CourseInfo table
             long crn = 0;
             try
             {
@@ -135,6 +138,7 @@ namespace GradeManagementSystem
                 {
                     if (reader3.Read())
                     {
+                        //Message box is for debugging mainly
                         crn = reader3.GetInt32("crn");
                         MessageBox.Show("Retrieved CRN: " + crn.ToString(), "CRN Retrieved", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
@@ -147,9 +151,10 @@ namespace GradeManagementSystem
                 return;
             }
 
-            // Step 5: Insert into grades_camden440 table
+            //Insert into Grades table
             if (crn == 0)
             {
+                //Debugging and error handling
                 MessageBox.Show("Error: Course information not found, unable to insert grade.", "Course Not Found", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 conn.Close();
                 return;
@@ -168,6 +173,7 @@ namespace GradeManagementSystem
             }
             catch (Exception ex)
             {
+                //Debugging
                 MessageBox.Show("Error while inserting grade: " + ex.Message, "Grade Insert Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 conn.Close();
                 return;
