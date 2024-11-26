@@ -46,6 +46,8 @@ namespace GradeManagementSystem
             showClasses = new Button();
             addGradeButton = new Button();
             allGrades = new TextBox();
+            hours = new MaskedTextBox();
+            label7 = new Label();
             SuspendLayout();
             // 
             // backButton
@@ -105,7 +107,7 @@ namespace GradeManagementSystem
             subjCode.Margin = new Padding(2);
             subjCode.Mask = "LLL";
             subjCode.Name = "subjCode";
-            subjCode.Size = new Size(22, 23);
+            subjCode.Size = new Size(29, 23);
             subjCode.TabIndex = 11;
             // 
             // studentID
@@ -208,11 +210,31 @@ namespace GradeManagementSystem
             allGrades.Size = new Size(506, 183);
             allGrades.TabIndex = 24;
             // 
+            // hours
+            // 
+            hours.Location = new Point(103, 186);
+            hours.Mask = "0";
+            hours.Name = "hours";
+            hours.Size = new Size(42, 23);
+            hours.TabIndex = 25;
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Location = new Point(103, 166);
+            label7.Name = "label7";
+            label7.Size = new Size(72, 15);
+            label7.TabIndex = 26;
+            label7.Text = "Enter Hours:";
+            label7.Click += label7_Click;
+            // 
             // AddGrade
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(734, 270);
+            Controls.Add(label7);
+            Controls.Add(hours);
             Controls.Add(allGrades);
             Controls.Add(addGradeButton);
             Controls.Add(showClasses);
@@ -254,5 +276,7 @@ namespace GradeManagementSystem
         private Button showClasses;
         private Button addGradeButton;
         private TextBox allGrades;
+        private MaskedTextBox hours;
+        private Label label7;
     }
 }
