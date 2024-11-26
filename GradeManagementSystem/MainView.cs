@@ -42,3 +42,9 @@ namespace GradeManagementSystem
 
     }
 }
+
+
+//Tables:
+//studentInfo_Camden440
+//courseInfo_Camden440
+//grades_Camden440

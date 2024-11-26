@@ -45,14 +45,16 @@ namespace GradeManagementSystem
             label6 = new Label();
             showClasses = new Button();
             addGradeButton = new Button();
+            allGrades = new TextBox();
             SuspendLayout();
             // 
             // backButton
             // 
             backButton.ForeColor = Color.Red;
-            backButton.Location = new Point(588, 363);
+            backButton.Location = new Point(583, 219);
+            backButton.Margin = new Padding(2);
             backButton.Name = "backButton";
-            backButton.Size = new Size(200, 75);
+            backButton.Size = new Size(140, 45);
             backButton.TabIndex = 0;
             backButton.Text = "Back to Main View";
             backButton.UseVisualStyleBackColor = true;
@@ -61,131 +63,157 @@ namespace GradeManagementSystem
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(12, 15);
+            label3.Location = new Point(8, 9);
+            label3.Margin = new Padding(2, 0, 2, 0);
             label3.Name = "label3";
-            label3.Size = new Size(145, 25);
+            label3.Size = new Size(95, 15);
             label3.TabIndex = 15;
             label3.Text = "Enter Student ID:";
             // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(12, 81);
+            label2.Location = new Point(8, 49);
+            label2.Margin = new Padding(2, 0, 2, 0);
             label2.Name = "label2";
-            label2.Size = new Size(166, 25);
+            label2.Size = new Size(110, 15);
             label2.TabIndex = 14;
             label2.Text = "Enter Subject Code:";
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(12, 153);
+            label1.Location = new Point(8, 92);
+            label1.Margin = new Padding(2, 0, 2, 0);
             label1.Name = "label1";
-            label1.Size = new Size(186, 25);
+            label1.Size = new Size(124, 15);
             label1.TabIndex = 13;
             label1.Text = "Enter Course Number:";
             // 
             // crseNumb
             // 
-            crseNumb.Location = new Point(12, 181);
-            crseNumb.Mask = "000";
+            crseNumb.Location = new Point(8, 109);
+            crseNumb.Margin = new Padding(2);
+            crseNumb.Mask = "000L";
             crseNumb.Name = "crseNumb";
-            crseNumb.Size = new Size(30, 31);
+            crseNumb.Size = new Size(29, 23);
             crseNumb.TabIndex = 12;
             // 
             // subjCode
             // 
-            subjCode.Location = new Point(12, 109);
+            subjCode.Location = new Point(8, 65);
+            subjCode.Margin = new Padding(2);
             subjCode.Mask = "LLL";
             subjCode.Name = "subjCode";
-            subjCode.Size = new Size(30, 31);
+            subjCode.Size = new Size(22, 23);
             subjCode.TabIndex = 11;
             // 
             // studentID
             // 
             studentID.CausesValidation = false;
-            studentID.Location = new Point(12, 43);
+            studentID.Location = new Point(8, 26);
+            studentID.Margin = new Padding(2);
             studentID.Mask = "000000000";
             studentID.Name = "studentID";
-            studentID.Size = new Size(77, 31);
+            studentID.Size = new Size(55, 23);
             studentID.TabIndex = 10;
             // 
             // newGrade
             // 
             newGrade.FormattingEnabled = true;
             newGrade.Items.AddRange(new object[] { "A", "B", "C", "D", "F" });
-            newGrade.Location = new Point(12, 385);
+            newGrade.Location = new Point(8, 231);
+            newGrade.Margin = new Padding(2);
             newGrade.Name = "newGrade";
-            newGrade.Size = new Size(118, 33);
+            newGrade.Size = new Size(84, 23);
             newGrade.TabIndex = 16;
             // 
             // season
             // 
             season.FormattingEnabled = true;
             season.Items.AddRange(new object[] { "Fall", "Winter", "Spring", "Summer" });
-            season.Location = new Point(12, 310);
+            season.Location = new Point(8, 186);
+            season.Margin = new Padding(2);
             season.Name = "season";
-            season.Size = new Size(118, 33);
+            season.Size = new Size(84, 23);
             season.TabIndex = 17;
             // 
             // year
             // 
-            year.Location = new Point(12, 243);
+            year.Location = new Point(8, 146);
+            year.Margin = new Padding(2);
             year.Mask = "0000";
             year.Name = "year";
-            year.Size = new Size(40, 31);
+            year.Size = new Size(29, 23);
             year.TabIndex = 18;
             // 
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(12, 215);
+            label4.Location = new Point(8, 129);
+            label4.Margin = new Padding(2, 0, 2, 0);
             label4.Name = "label4";
-            label4.Size = new Size(93, 25);
+            label4.Size = new Size(62, 15);
             label4.TabIndex = 19;
             label4.Text = "Enter Year:";
             // 
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(12, 277);
+            label5.Location = new Point(8, 166);
+            label5.Margin = new Padding(2, 0, 2, 0);
             label5.Name = "label5";
-            label5.Size = new Size(118, 25);
+            label5.Size = new Size(77, 15);
             label5.TabIndex = 20;
             label5.Text = "Enter Season:";
             // 
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(12, 346);
+            label6.Location = new Point(8, 211);
+            label6.Margin = new Padding(2, 0, 2, 0);
             label6.Name = "label6";
-            label6.Size = new Size(108, 25);
+            label6.Size = new Size(71, 15);
             label6.TabIndex = 21;
             label6.Text = "Enter Grade:";
             // 
             // showClasses
             // 
-            showClasses.Location = new Point(95, 41);
+            showClasses.Location = new Point(66, 25);
+            showClasses.Margin = new Padding(2);
             showClasses.Name = "showClasses";
-            showClasses.Size = new Size(152, 34);
+            showClasses.Size = new Size(106, 20);
             showClasses.TabIndex = 22;
             showClasses.Text = "Find Grades";
             showClasses.UseVisualStyleBackColor = true;
+            showClasses.Click += showClasses_Click;
             // 
             // addGradeButton
             // 
-            addGradeButton.Location = new Point(147, 385);
+            addGradeButton.Location = new Point(103, 231);
+            addGradeButton.Margin = new Padding(2);
             addGradeButton.Name = "addGradeButton";
-            addGradeButton.Size = new Size(112, 34);
+            addGradeButton.Size = new Size(78, 20);
             addGradeButton.TabIndex = 23;
             addGradeButton.Text = "Submit";
             addGradeButton.UseVisualStyleBackColor = true;
+            addGradeButton.Click += addGradeButton_Click;
+            // 
+            // allGrades
+            // 
+            allGrades.Location = new Point(216, 26);
+            allGrades.Multiline = true;
+            allGrades.Name = "allGrades";
+            allGrades.ReadOnly = true;
+            allGrades.Size = new Size(506, 183);
+            allGrades.TabIndex = 24;
             // 
             // AddGrade
             // 
-            AutoScaleDimensions = new SizeF(10F, 25F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(734, 270);
+            Controls.Add(allGrades);
             Controls.Add(addGradeButton);
             Controls.Add(showClasses);
             Controls.Add(label6);
@@ -201,6 +229,7 @@ namespace GradeManagementSystem
             Controls.Add(subjCode);
             Controls.Add(studentID);
             Controls.Add(backButton);
+            Margin = new Padding(2);
             Name = "AddGrade";
             Text = "AddGrade";
             ResumeLayout(false);
@@ -224,5 +253,6 @@ namespace GradeManagementSystem
         private Label label6;
         private Button showClasses;
         private Button addGradeButton;
+        private TextBox allGrades;
     }
 }
