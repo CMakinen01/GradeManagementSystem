@@ -64,6 +64,7 @@ namespace GradeManagementSystem
                     }
                 }
             }
+
             catch (Exception ex)
             {
                 MessageBox.Show("Error while searching for student: " + ex.Message, "Student Search Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -177,10 +178,54 @@ namespace GradeManagementSystem
                 conn.Close();
                 return;
             }
-            conn.Close();
             updateGPA();
 
+            refreshTable();
+
+
+
         }//close button
+
+
+        //refresh table after button
+
+        private void refreshTable()
+        {
+            string fixID = studentID.Text.Replace(" ", "");
+            //search the DB, if the student does not exist, exit process
+            string connStr = "server=csitmariadb.eku.edu;user=student;database=csc340_db;port=3306;password=Maroon@21?;";
+            string query = "SELECT * FROM studentInfo_Camden440 LEFT JOIN grades_Camden440 ON studentInfo_Camden440.student_id = grades_Camden440.student_id LEFT JOIN courseInfo_Camden440 ON grades_Camden440.crn = courseInfo_Camden440.crn WHERE studentInfo_Camden440.student_id = @studentID";
+            MySql.Data.MySqlClient.MySqlConnection conn = new MySql.Data.MySqlClient.MySqlConnection(connStr);
+            try
+            {
+                conn.Open();
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@StudentID", fixID);
+                using (MySqlDataReader reader = cmd.ExecuteReader())
+                {
+                    StringBuilder sb = new StringBuilder();
+
+                    while (reader.Read())
+                    {
+
+                        sb.AppendLine($"ID: {reader.GetInt32(0)}    CRN: {reader.GetInt32(3)}    Name: {reader.GetString(1)}  GPA: {reader.GetDouble(2)}    Course: {reader.GetString(7)} {reader.GetString(8)}     Taken: {reader.GetString(10)} {reader.GetInt16(9)}");
+                    }
+                    reader.Close();
+                    allGrades.Text = sb.ToString();
+                }
+
+
+
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            conn.Close();
+        }
+
+
 
         private void showClasses_Click(object sender, EventArgs e)
         {
