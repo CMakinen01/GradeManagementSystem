@@ -273,7 +273,7 @@ namespace GradeManagementSystem
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error while Deleting course: " + ex.Message, "Course Insert Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Error while Deleting course: " + ex.Message, "Course Delete Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 conn.Close();
                 return;
             }
@@ -326,7 +326,15 @@ namespace GradeManagementSystem
             conn.Close();
         }
 
+        private void enteredCRN_MaskInputRejected(object sender, MaskInputRejectedEventArgs e)
+        {
 
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 
 

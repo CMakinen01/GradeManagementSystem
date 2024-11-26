@@ -35,6 +35,7 @@
             deleteGradeButton = new Button();
             allGrades = new TextBox();
             enteredCRN = new MaskedTextBox();
+            label1 = new Label();
             SuspendLayout();
             // 
             // backButton
@@ -83,7 +84,7 @@
             // 
             // deleteGradeButton
             // 
-            deleteGradeButton.Location = new Point(68, 50);
+            deleteGradeButton.Location = new Point(68, 74);
             deleteGradeButton.Margin = new Padding(2);
             deleteGradeButton.Name = "deleteGradeButton";
             deleteGradeButton.Size = new Size(104, 20);
@@ -104,17 +105,30 @@
             // 
             // enteredCRN
             // 
-            enteredCRN.Location = new Point(8, 50);
+            enteredCRN.Location = new Point(8, 71);
             enteredCRN.Mask = "000000000";
             enteredCRN.Name = "enteredCRN";
             enteredCRN.Size = new Size(55, 23);
             enteredCRN.TabIndex = 29;
+            enteredCRN.MaskInputRejected += enteredCRN_MaskInputRejected;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(11, 53);
+            label1.Margin = new Padding(2, 0, 2, 0);
+            label1.Name = "label1";
+            label1.Size = new Size(64, 15);
+            label1.TabIndex = 30;
+            label1.Text = "Enter CRN:";
+            label1.Click += label1_Click;
             // 
             // DeleteGrade
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(734, 270);
+            Controls.Add(label1);
             Controls.Add(enteredCRN);
             Controls.Add(allGrades);
             Controls.Add(deleteGradeButton);
@@ -138,5 +152,6 @@
         private Button deleteGradeButton;
         private TextBox allGrades;
         private MaskedTextBox enteredCRN;
+        private Label label1;
     }
 }
