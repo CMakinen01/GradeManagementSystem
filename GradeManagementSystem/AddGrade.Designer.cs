@@ -207,6 +207,7 @@ namespace GradeManagementSystem
             allGrades.Multiline = true;
             allGrades.Name = "allGrades";
             allGrades.ReadOnly = true;
+            allGrades.ScrollBars = ScrollBars.Both;
             allGrades.Size = new Size(506, 183);
             allGrades.TabIndex = 24;
             // 

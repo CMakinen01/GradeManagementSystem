@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
 using MySql.Data.MySqlClient;
 
 namespace GradeManagementSystem
@@ -42,7 +41,7 @@ namespace GradeManagementSystem
                 return;
             }
 
-            //search the DB, if the student does not exist, exit process
+            //Check for student existence
             string connStr = "server=csitmariadb.eku.edu;user=student;database=csc340_db;port=3306;password=Maroon@21?;";
             MySql.Data.MySqlClient.MySqlConnection conn = new MySql.Data.MySqlClient.MySqlConnection(connStr);
 
@@ -100,7 +99,7 @@ namespace GradeManagementSystem
                 return;
             }
 
-            // Insert into Course table
+            //Insert into Course table
             try
             {
                 string insertCourseQuery = "INSERT INTO courseinfo_camden440 (subj_code, crse_numb, year, season, hours) " +
@@ -179,7 +178,7 @@ namespace GradeManagementSystem
                 return;
             }
             conn.Close();
-
+            updateGPA();
 
         }//close button
 
@@ -223,8 +222,133 @@ namespace GradeManagementSystem
         {
 
         }
+
+        //method to update a student's GPA
+        private void updateGPA()
+        {
+            //List to hold all necessary info
+            List<(int hours, char grade)> courses = new List<(int hours, char grade)>();
+            string fixID = studentID.Text.Replace(" ", "");
+
+            string connStr = "server=csitmariadb.eku.edu;user=student;database=csc340_db;port=3306;password=Maroon@21?;";
+            string query = "SELECT* FROM grades_Camden440 WHERE student_id = @StudentID";
+            MySql.Data.MySqlClient.MySqlConnection conn = new MySql.Data.MySqlClient.MySqlConnection(connStr);
+
+            try
+            {
+
+                conn.Open();
+
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@StudentID", fixID);
+
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            int crn = reader.GetInt32(reader.GetOrdinal("crn"));
+                            char grade = reader.GetChar(reader.GetOrdinal("grade"));
+
+                            //Get course hours for each CRN
+                            int hours = 0;
+                            string queryHours = "SELECT hours FROM courseInfo_Camden440 WHERE crn = @CRN";
+
+                            using (MySqlConnection connInner = new MySqlConnection(connStr))
+                            {
+                                connInner.Open();
+
+                                using (MySqlCommand cmdHours = new MySqlCommand(queryHours, connInner))
+                                {
+                                    cmdHours.Parameters.AddWithValue("@CRN", crn);
+                                    using (MySqlDataReader readerHrs = cmdHours.ExecuteReader())
+                                    {
+                                        if (readerHrs.Read())
+                                        {
+                                            hours = readerHrs.GetInt32(readerHrs.GetOrdinal("hours"));
+                                        }
+                                    }
+                                }
+                            }
+                            // Add to course list
+                            courses.Add((hours, grade));
+                        }
+                    }
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                MessageBox.Show(ex.ToString());
+            }
+            conn.Close();
+
+            //Math to calculate GPA
+            double totalHours = 0;
+            double totalPoints = 0;
+            foreach ((int hours, char grade) course in courses)
+            {
+                switch (course.grade)
+                {
+                    case 'A':
+                        totalPoints += course.hours * 4.0;
+                        break;
+                    case 'B':
+                        totalPoints += course.hours * 3.0;
+                        break;
+                    case 'C':
+                        totalPoints += course.hours * 2.0;
+                        break;
+                    case 'D':
+                        totalPoints += course.hours * 1.0;
+                        break;
+                    case 'F':
+                        totalPoints += course.hours * 0;
+                        break;
+                }
+                totalHours += course.hours;
+            }
+
+            if (totalPoints == 0)//Avoid dividing by 0, exit
+            {
+                MessageBox.Show("divide by zero");
+                return;
+            }
+            //Round GPA to hundredths place for visual clarity
+            double updatedGPA = Math.Round(totalPoints / totalHours, 2);
+            double GPA = updatedGPA;
+
+            //Update table(s)
+            MessageBox.Show("GPA: " + updatedGPA);
+            query = "UPDATE studentInfo_Camden440 SET student_GPA = @GPA WHERE student_id = @ID";
+            try
+            {
+
+                Console.WriteLine("Connecting to MySQL...");
+                conn.Open();
+                
+
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@ID", fixID);
+                cmd.Parameters.AddWithValue("@GPA", GPA);
+                cmd.ExecuteNonQuery();
+                MessageBox.Show("GPA updated successfully");
+
+
+            }
+            catch (Exception ex)//error handling
+            {
+                Console.WriteLine(ex.ToString());
+                MessageBox.Show(ex.ToString());
+            }
+            conn.Close();
+
+
+        }
     }
 }
+
 //Tables:
 //studentInfo_Camden440
 //courseInfo_Camden440
