@@ -16,6 +16,7 @@ namespace GradeManagementSystem
         public AddGrade()
         {
             InitializeComponent();
+            //Add a view all students method
         }
 
         private void backButton_Click(object sender, EventArgs e)
