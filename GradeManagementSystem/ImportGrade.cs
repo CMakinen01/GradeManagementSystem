@@ -315,7 +315,7 @@ namespace GradeManagementSystem
                 string gradeValue = workSheet[$"C{i}"].StringValue.ToUpper();
                 if (!Regex.IsMatch(gradeValue, "^[ABCDF]$"))
                 {
-                    MessageBox.Show($"Invalid Grade at row {i}. Grade must be either A, B, C, D, or F.", "Grade Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"Invalid Grade at row {i} for file {fn} Grade must be either A, B, C, D, or F.", "Grade Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return false;
                 }
             }
