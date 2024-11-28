@@ -17,6 +17,7 @@ namespace GradeManagementSystem
         {
             InitializeComponent();
             //Add a view all students method
+            SeeAll();
         }
 
         private void backButton_Click(object sender, EventArgs e)
@@ -391,7 +392,46 @@ namespace GradeManagementSystem
             conn.Close();
 
 
+
         }
+
+
+        private void SeeAll()
+        {
+            string fixID = studentID.Text.Replace(" ", "");
+            //search the DB, if the student does not exist, exit process
+            string connStr = "server=csitmariadb.eku.edu;user=student;database=csc340_db;port=3306;password=Maroon@21?;";
+            string query = "SELECT * FROM studentInfo_Camden440";
+            MySql.Data.MySqlClient.MySqlConnection conn = new MySql.Data.MySqlClient.MySqlConnection(connStr);
+            try
+            {
+                conn.Open();
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                using (MySqlDataReader reader = cmd.ExecuteReader())
+                {
+                    StringBuilder sb = new StringBuilder();
+
+                    while (reader.Read())
+                    {
+
+                        sb.AppendLine($"ID: {reader.GetInt32(0)}         Name: {reader.GetString(1)}");
+                    }
+                    reader.Close();
+                    allGrades.Text = sb.ToString();
+                }
+
+
+
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Clipboard.SetText(ex.ToString());
+            }
+        }
+
+
     }
 }
 
