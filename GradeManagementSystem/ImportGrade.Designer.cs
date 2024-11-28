@@ -32,6 +32,8 @@
             fileImport = new Button();
             folderImport = new Button();
             openFileDialog1 = new OpenFileDialog();
+            openFileDialog2 = new OpenFileDialog();
+            folderBrowserDialog1 = new FolderBrowserDialog();
             SuspendLayout();
             // 
             // backButton
@@ -70,6 +72,15 @@
             // 
             openFileDialog1.FileName = "openFileDialog1";
             // 
+            // openFileDialog2
+            // 
+            openFileDialog2.FileName = "openFileDialog1";
+            openFileDialog2.FileOk += openFileDialog2_FileOk;
+            // 
+            // folderBrowserDialog1
+            // 
+            folderBrowserDialog1.HelpRequest += folderBrowserDialog1_HelpRequest;
+            // 
             // ImportGrade
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -90,5 +101,7 @@
         private Button fileImport;
         private Button folderImport;
         private OpenFileDialog openFileDialog1;
+        private OpenFileDialog openFileDialog2;
+        private FolderBrowserDialog folderBrowserDialog1;
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.VisualBasic.Devices;
 using MySql.Data.MySqlClient;
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -35,11 +36,62 @@ namespace GradeManagementSystem
         //method to import 1 to many files
         private void folderImport_Click(object sender, EventArgs e)
         {
+            //Check folder name
+            string folder = "";
+            if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
+            {
+                folder = Path.GetFileName(folderBrowserDialog1.SelectedPath);
+                MessageBox.Show(folder);
+            }
+            ;
+            if (isValidFolderName(folder) == false)
+            {
+                MessageBox.Show("Invalid Folder name. \nPlease ensure your Folder is of the format 'Grades [year] [season]'");
+                return;
+            }
+            //Check all file validity
+            bool allFiles = CheckAllFiles(folder);
+            if (allFiles == false)
+            {
+                return;
+            }
+            //check if file and folder name match
+            try
+            {
+                string[] files = Directory.GetFiles(folder);
+                bool match = true;
+                foreach (string filePath in files)
+                {
+                    string fileName = Path.GetFileName(filePath);
+                    match = FolderFileMatch(folder, fileName);
+                    if (match == false)
+                    {
+                        MessageBox.Show("A file and folder do not match");
+                        return;
+                    }
 
+                }
+
+            }
+            catch (Exception ex)
+            {
+                //Handle any exceptions that occur
+                Console.WriteLine($"Error processing files: {ex.Message}");
+                return;
+            }
+
+            //loop through fileImport
+            MessageBox.Show("Insert Final check");
+            return;
         }
 
         //import a single file
         private void fileImport_Click(object sender, EventArgs e)
+        {
+            insertFile();
+        }//close import
+
+        private void insertFile()
         {
             string file = "";
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
@@ -62,13 +114,16 @@ namespace GradeManagementSystem
             int CC = workSheet.Columns.Count();
             int studentID = 0;
 
-           // MessageBox.Show(RC.ToString());
 
             string[] fileNameDetails = file.Split(' ');
 
-            //Gather Course Info, IE Check to see if course exists 
-            //MessageBox.Show(CRN.ToString());
+            //Check file for invalid input
+            bool isValid = CheckFileValidity();
 
+            if (isValid == false)
+            {
+                return;
+            }
 
             for (int i = 2; i <= RC; i++)
             {
@@ -110,7 +165,7 @@ namespace GradeManagementSystem
                             return;
                         }
 
-                        
+
                         try
                         {
                             string insertImportedIdQuery = "INSERT INTO importedid_camden440 (entered_id, student_id) VALUES (@EnteredID, @StudentID)";
@@ -173,7 +228,7 @@ namespace GradeManagementSystem
 
                     id = GetStudent(studentID);
 
-                    MessageBox.Show(id + "  " + CRN + "  " + grade);
+                    //MessageBox.Show(id + "  " + CRN + "  " + grade);
 
                     cmd.Parameters.AddWithValue("@student_id", id);//fix to get actual student_id
                     cmd.Parameters.AddWithValue("@CRN", CRN);
@@ -187,7 +242,102 @@ namespace GradeManagementSystem
 
                 updateGPA(id);
             }
-        }//close import
+        }
+
+
+        private bool CheckFileValidity()
+        {
+            var workbook = WorkBook.Load(fn);
+            var workSheet = workbook.WorkSheets.First();
+
+            //Validate Titles
+
+            string expectedName = "Name";
+            string expectedID = "ID";
+            string expectedGrade = "Grade";
+            string retrievedName = workSheet["A1"].StringValue;
+            string retrievedID = workSheet["B1"].StringValue;
+            string retrievedGrade = workSheet["C1"].StringValue;
+
+            if (expectedName != retrievedName)
+            {
+                MessageBox.Show("Invalid Name Header");
+                return false;
+            }
+            else if (expectedID != retrievedID)
+            {
+                MessageBox.Show("Invalid ID Header");
+                return false;
+            }
+            else if (expectedGrade != retrievedGrade)
+            {
+                MessageBox.Show("Invalid Grade Header");
+                return false;
+            }
+
+
+            //Validate column data
+            int rowCount = workSheet.Rows.Count();
+            for (int i = 2; i <= rowCount; i++)
+            {
+                //Validate Name
+                string name = workSheet[$"A{i}"].StringValue;
+                if (string.IsNullOrWhiteSpace(name))
+                {
+                    MessageBox.Show($"Empty Name in Row{i}.", "Name Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return false;
+                }
+
+                //Validate ID
+                string idValue = workSheet[$"B{i}"].StringValue;
+                if (!int.TryParse(idValue, out int id))
+                {
+                    MessageBox.Show($"Invalid ID at row {i}. ID must be an integer.", "ID Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return false;
+                }
+
+                //Validate Grade
+                string gradeValue = workSheet[$"C{i}"].StringValue.ToUpper();
+                if (!Regex.IsMatch(gradeValue, "^[ABCDF]$"))
+                {
+                    MessageBox.Show($"Invalid Grade at row {i}. Grade must be either A, B, C, D, or F.", "Grade Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+
+        private bool FolderFileMatch(string folderName, string fileName)
+        {
+            try
+            {
+                string[] folder = folderName.Split(' ');
+                string[] file = fileName.Split(' ');
+
+                string folderYear = folder[1];
+                string folderSeason = folder[2].ToLower();
+
+                string fileYear = file[2];
+                string fileSeason = file[3].ToLower();
+                return folderYear == fileYear && folderSeason == fileSeason;
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error encountered during matching: " + ex);
+                return false;
+            }
+        }
+
+
+        private bool isValidFolderName(string folderName)
+        {
+            string pattern1 = @"^Grades\s\d{4}\s(Spring|Summer|Fall|Winter)$";
+            return Regex.IsMatch(pattern1, folderName, RegexOptions.IgnoreCase);
+        }
+
 
         private bool IsValidFileName(string fileName)
         {
@@ -196,18 +346,6 @@ namespace GradeManagementSystem
 
             return Regex.IsMatch(fileName, pattern1, RegexOptions.IgnoreCase) || Regex.IsMatch(fileName, pattern2, RegexOptions.IgnoreCase);
         }
-
-        /*
-        string readFile(string fn)
-        {
-            var workbook = WorkBook.Load(fn);
-            var workSheet = workbook.WorkSheets.First();
-            var cell = workSheet["A2"];
-            int RC = workSheet.Rows.Count() - 1;
-            int CC = workSheet.Columns.Count();
-            return cell.StringValue;
-        }
-        */
 
         private int searchStudent(int studentID)
         {
@@ -448,10 +586,10 @@ namespace GradeManagementSystem
             {
                 MessageBox.Show("Error while inserting course: " + ex.Message, "Course Insert Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            
-            
+
+
             conn.Close();
-            
+
         }
 
 
@@ -489,6 +627,44 @@ namespace GradeManagementSystem
             }
         }
 
+        //Check all files in the folder
+        private bool CheckAllFiles(string folderPath)
+        {
+            try
+            {
+                string[] files = Directory.GetFiles(folderPath);
+                foreach (string filePath in files)
+                {
+                    string fileName = Path.GetFileName(filePath);
+                    if (!IsValidFileName(fileName))
+                    {
+                        MessageBox.Show("Invalid File detected");
+                        return false;
+                    }
 
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                //Handle any exceptions that occur
+                Console.WriteLine($"Error processing files: {ex.Message}");
+                return false;
+            }
+        }
+
+
+
+
+
+        private void openFileDialog2_FileOk(object sender, CancelEventArgs e)
+        {
+
+        }
+
+        private void folderBrowserDialog1_HelpRequest(object sender, EventArgs e)
+        {
+
+        }
     }
 }
