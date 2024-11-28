@@ -31,7 +31,7 @@ namespace GradeManagementSystem
             this.Close();
         }
 
-        string fn = "";
+        
 
         //method to import 1 to many files
         private void folderImport_Click(object sender, EventArgs e)
@@ -47,60 +47,74 @@ namespace GradeManagementSystem
             if (isValidFolderName(folder) == false)
             {
                 MessageBox.Show("Invalid Folder name. \nPlease ensure your Folder is of the format 'Grades [year] [season]'");
+                MessageBox.Show(folder);
                 return;
             }
             //Check all file validity
-            bool allFiles = CheckAllFiles(folder);
+            string folder2 = folderBrowserDialog1.SelectedPath;
+            //MessageBox.Show("Before Check");
+            bool allFiles = CheckAllFiles(folder2);
+            //MessageBox.Show("After Check");
             if (allFiles == false)
             {
+                MessageBox.Show("Invalid File Contained in Folder");
                 return;
             }
             //check if file and folder name match
-            try
+            
+            string[] files = Directory.GetFiles(folder2); 
+            bool match;
+            foreach (string filePath in files)
             {
-                string[] files = Directory.GetFiles(folder);
-                bool match = true;
-                foreach (string filePath in files)
+                string fileName = Path.GetFileName(filePath);
+                //MessageBox.Show(fileName);
+                //MessageBox.Show("Before Match");
+                match = FolderFileMatch(folder, fileName);
+                //MessageBox.Show("After Match");
+                if (match == false)
                 {
-                    string fileName = Path.GetFileName(filePath);
-                    match = FolderFileMatch(folder, fileName);
-                    if (match == false)
-                    {
-                        MessageBox.Show("A file and folder do not match");
-                        return;
-                    }
-
+                    MessageBox.Show("A file and folder do not match");
+                    return;
                 }
-
+                if (match == true)
+                {
+                    MessageBox.Show("All Match");
+                }
             }
-            catch (Exception ex)
+
+            
+
+            //loop through files
+            foreach (string filePath in files)
             {
-                //Handle any exceptions that occur
-                Console.WriteLine($"Error processing files: {ex.Message}");
-                return;
+                string fn = filePath;
+                string fileName = Path.GetFileName(filePath);
+                insertFile(fileName, fn);
             }
-
-            //loop through fileImport
-            MessageBox.Show("Insert Final check");
+            MessageBox.Show("Operation Complete");
             return;
         }
 
         //import a single file
         private void fileImport_Click(object sender, EventArgs e)
         {
-            insertFile();
-        }//close import
-
-        private void insertFile()
-        {
             string file = "";
+            string fn = "";
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 fn = openFileDialog1.FileName;
                 file = openFileDialog1.SafeFileName;
-                MessageBox.Show(file);
+                MessageBox.Show(fn);
             }
-            ;
+            insertFile(file, fn);
+            MessageBox.Show("Operation Complete");
+
+        }//close import
+
+        private void insertFile(string file, string fn)
+        {
+            
+            
             if (!IsValidFileName(file))
             {
                 MessageBox.Show("Invalid file name. \n Please ensure your file is of the format [Course prefix] [Course Number] [Year] [semester].xlsx");
@@ -118,7 +132,7 @@ namespace GradeManagementSystem
             string[] fileNameDetails = file.Split(' ');
 
             //Check file for invalid input
-            bool isValid = CheckFileValidity();
+            bool isValid = CheckFileValidity(fn);
 
             if (isValid == false)
             {
@@ -242,10 +256,11 @@ namespace GradeManagementSystem
 
                 updateGPA(id);
             }
+
         }
 
 
-        private bool CheckFileValidity()
+        private bool CheckFileValidity(string fn)
         {
             var workbook = WorkBook.Load(fn);
             var workSheet = workbook.WorkSheets.First();
@@ -318,9 +333,14 @@ namespace GradeManagementSystem
 
                 string folderYear = folder[1];
                 string folderSeason = folder[2].ToLower();
-
+                //MessageBox.Show(folderYear + folderSeason);
                 string fileYear = file[2];
+                
+                file[3] = file[3].Substring(0, file[3].IndexOf('.'));
                 string fileSeason = file[3].ToLower();
+                //MessageBox.Show(fileYear + fileSeason);
+
+
                 return folderYear == fileYear && folderSeason == fileSeason;
 
             }
@@ -334,8 +354,8 @@ namespace GradeManagementSystem
 
         private bool isValidFolderName(string folderName)
         {
-            string pattern1 = @"^Grades\s\d{4}\s(Spring|Summer|Fall|Winter)$";
-            return Regex.IsMatch(pattern1, folderName, RegexOptions.IgnoreCase);
+            string pattern1 = @"^Grades\s\d{4}\s(spring|summer|fall|winter)$";
+            return Regex.IsMatch(folderName, pattern1, RegexOptions.IgnoreCase);
         }
 
 
@@ -507,7 +527,7 @@ namespace GradeManagementSystem
 
             if (totalPoints == 0)//Avoid dividing by 0, exit
             {
-                MessageBox.Show("Divide by zero");
+                //MessageBox.Show("Divide by zero");
                 return;
             }
             //Round GPA to hundredths place for visual clarity
@@ -515,7 +535,7 @@ namespace GradeManagementSystem
             double GPA = updatedGPA;
 
             //Update table(s)
-            MessageBox.Show("GPA: " + updatedGPA);
+            //MessageBox.Show("GPA: " + updatedGPA);
             query = "UPDATE studentInfo_Camden440 SET student_GPA = @GPA WHERE student_id = @ID";
             try
             {
@@ -528,7 +548,7 @@ namespace GradeManagementSystem
                 cmd.Parameters.AddWithValue("@ID", studentID);
                 cmd.Parameters.AddWithValue("@GPA", GPA);
                 cmd.ExecuteNonQuery();
-                MessageBox.Show("GPA updated successfully");
+                //MessageBox.Show("GPA updated successfully");
 
 
             }
@@ -630,12 +650,16 @@ namespace GradeManagementSystem
         //Check all files in the folder
         private bool CheckAllFiles(string folderPath)
         {
+            //MessageBox.Show("Entered Check All with folder: " + folderPath);
             try
             {
                 string[] files = Directory.GetFiles(folderPath);
+                //MessageBox.Show(files[0]);
+                
                 foreach (string filePath in files)
                 {
                     string fileName = Path.GetFileName(filePath);
+                   // MessageBox.Show(fileName);
                     if (!IsValidFileName(fileName))
                     {
                         MessageBox.Show("Invalid File detected");
@@ -643,14 +667,16 @@ namespace GradeManagementSystem
                     }
 
                 }
-                return true;
+                
             }
             catch (Exception ex)
             {
                 //Handle any exceptions that occur
-                Console.WriteLine($"Error processing files: {ex.Message}");
+                MessageBox.Show("Error processing files: "+ ex);
                 return false;
             }
+            MessageBox.Show("All files pass");
+            return true;
         }
 
 
