@@ -75,8 +75,10 @@ namespace GradeManagementSystem
             }
 
             //Check for existing courses
+            int check = 0;
             try
             {
+                
                 string checkCourseQuery = "SELECT * FROM courseinfo_camden440 WHERE subj_code = @subj AND crse_numb = @crse AND year = @year AND season = @season";
                 MySqlCommand cmdCheckCourse = new MySqlCommand(checkCourseQuery, conn);
                 cmdCheckCourse.Parameters.AddWithValue("@subj", capitalSubj);
@@ -90,8 +92,9 @@ namespace GradeManagementSystem
                     if (readerCheckCourse.HasRows)
                     {
                         MessageBox.Show("This course already exists.", "Course Already Exists", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        conn.Close();
-                        return;
+                        check = 1;
+                        //conn.Close();
+                        //return;
                     }
                 }
             }
@@ -102,27 +105,32 @@ namespace GradeManagementSystem
                 return;
             }
 
-            //Insert into Course table
-            try
-            {
-                string insertCourseQuery = "INSERT INTO courseinfo_camden440 (subj_code, crse_numb, year, season, hours) " +
-                                           "VALUES (@subj, @crse, @year, @season, @hours)";
-                MySqlCommand cmdInsertCourse = new MySqlCommand(insertCourseQuery, conn);
-                cmdInsertCourse.Parameters.AddWithValue("@subj", capitalSubj);
-                cmdInsertCourse.Parameters.AddWithValue("@crse", crseNum);
-                cmdInsertCourse.Parameters.AddWithValue("@year", fixYear);
-                cmdInsertCourse.Parameters.AddWithValue("@season", season.Text);
-                cmdInsertCourse.Parameters.AddWithValue("@hours", crseHrs);
 
-                cmdInsertCourse.ExecuteNonQuery();
-                MessageBox.Show("Course added successfully.");
+            //Insert into Course table
+            if (check != 1){
+                try
+                {
+
+                    string insertCourseQuery = "INSERT INTO courseinfo_camden440 (subj_code, crse_numb, year, season, hours) " +
+                                               "VALUES (@subj, @crse, @year, @season, @hours)";
+                    MySqlCommand cmdInsertCourse = new MySqlCommand(insertCourseQuery, conn);
+                    cmdInsertCourse.Parameters.AddWithValue("@subj", capitalSubj);
+                    cmdInsertCourse.Parameters.AddWithValue("@crse", crseNum);
+                    cmdInsertCourse.Parameters.AddWithValue("@year", fixYear);
+                    cmdInsertCourse.Parameters.AddWithValue("@season", season.Text);
+                    cmdInsertCourse.Parameters.AddWithValue("@hours", crseHrs);
+
+                    cmdInsertCourse.ExecuteNonQuery();
+                    MessageBox.Show("Course added successfully.");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error while inserting course: " + ex.Message, "Course Insert Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    conn.Close();
+                    return;
+                }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error while inserting course: " + ex.Message, "Course Insert Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                conn.Close();
-                return;
-            }
+            
 
             //Retrieve the CRN from the CourseInfo table
             long crn = 0;
