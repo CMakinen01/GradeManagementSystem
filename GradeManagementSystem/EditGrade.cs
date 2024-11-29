@@ -248,7 +248,7 @@ namespace GradeManagementSystem
 
         }
 
-
+        //Updates table displayed to user
         private void refreshTable()
         {
             string fixID = studentID.Text.Replace(" ", "");
@@ -289,6 +289,8 @@ namespace GradeManagementSystem
         {
 
         }
+
+        //called upon opening form
         private void SeeAll()
         {
             string fixID = studentID.Text.Replace(" ", "");

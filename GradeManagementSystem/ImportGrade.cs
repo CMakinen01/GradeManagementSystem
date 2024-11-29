@@ -33,7 +33,7 @@ namespace GradeManagementSystem
 
         
 
-        //method to import 1 to many files
+        //method to import 1 to many files from a folder
         private void folderImport_Click(object sender, EventArgs e)
         {
             //Check folder name
@@ -44,11 +44,12 @@ namespace GradeManagementSystem
                 MessageBox.Show(folder);
             }
             ;
+            //Call method to check name
             if (isValidFolderName(folder) == false)
             {
                 MessageBox.Show("Invalid Folder name. \nPlease ensure your Folder is of the format 'Grades [year] [season]'");
                 MessageBox.Show(folder);
-                return;
+                return;//exit to avoid errors
             }
             //Check all file validity
             string folder2 = folderBrowserDialog1.SelectedPath;
@@ -74,17 +75,14 @@ namespace GradeManagementSystem
                 if (match == false)
                 {
                     MessageBox.Show("A file and folder do not match");
-                    return;
+                    return;//Exit to avoid errors
                 }
-                if (match == true)
-                {
-                    MessageBox.Show("All Match");
-                }
+                
             }
 
             
 
-            //loop through files
+            //loop through file method for every folder in file
             foreach (string filePath in files)
             {
                 string fn = filePath;
@@ -92,12 +90,13 @@ namespace GradeManagementSystem
                 insertFile(fileName, fn);
             }
             MessageBox.Show("Operation Complete");
-            return;
+            return;//finish
         }
 
         //import a single file
         private void fileImport_Click(object sender, EventArgs e)
         {
+            //Get file
             string file = "";
             string fn = "";
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
@@ -111,16 +110,18 @@ namespace GradeManagementSystem
 
         }//close import
 
+        //Method to insert a file
         private void insertFile(string file, string fn)
         {
             
-            
+            //Check name validity
             if (!IsValidFileName(file))
             {
                 MessageBox.Show("Invalid file name. \n Please ensure your file is of the format [Course prefix] [Course Number] [Year] [semester].xlsx");
                 return;
             }
 
+            //Get details
             var workbook = WorkBook.Load(fn);
             var workSheet = workbook.WorkSheets.First();
             var cell = workSheet["A2"];
@@ -145,6 +146,7 @@ namespace GradeManagementSystem
                 cell = workSheet[$"B{i}"];
                 studentID = int.Parse(cell.StringValue);
 
+                //Search for a student and add if they are not present yet in the database
                 s = searchStudent(studentID);
                 string name = workSheet[$"A{i}"].StringValue;
                 if (s == -1)
@@ -157,7 +159,7 @@ namespace GradeManagementSystem
                     {
                         conn1.Open();
                         int generatedID = 0;
-                        // Insert into `studentinfo_camden440` table
+                        //Insert into studentInfo table
                         try
                         {
                             string insertQuery = "INSERT INTO studentinfo_camden440 (student_name, student_gpa) VALUES (@studentName, 0); SELECT LAST_INSERT_ID();";
@@ -165,7 +167,7 @@ namespace GradeManagementSystem
                             {
                                 cmdInsert.Parameters.AddWithValue("@studentName", name);
 
-                                // Retrieve the generated student_id
+                                //Retrieve the id
                                 object result = cmdInsert.ExecuteScalar();
                                 generatedID = Convert.ToInt32(result);
                             }
@@ -179,7 +181,7 @@ namespace GradeManagementSystem
                             return;
                         }
 
-
+                        //Insert the id from the excel file and match it to the database id
                         try
                         {
                             string insertImportedIdQuery = "INSERT INTO importedid_camden440 (entered_id, student_id) VALUES (@EnteredID, @StudentID)";
@@ -323,7 +325,7 @@ namespace GradeManagementSystem
             return true;
         }
 
-
+        //method to match the folder and files
         private bool FolderFileMatch(string folderName, string fileName)
         {
             try
@@ -351,7 +353,7 @@ namespace GradeManagementSystem
             }
         }
 
-
+        //Check folder/File against normal form
         private bool isValidFolderName(string folderName)
         {
             string pattern1 = @"^Grades\s\d{4}\s(spring|summer|fall|winter)$";
@@ -367,6 +369,7 @@ namespace GradeManagementSystem
             return Regex.IsMatch(fileName, pattern1, RegexOptions.IgnoreCase) || Regex.IsMatch(fileName, pattern2, RegexOptions.IgnoreCase);
         }
 
+        //Search for a student existing in the database
         private int searchStudent(int studentID)
         {
             string connStr = "server=csitmariadb.eku.edu;user=student;database=csc340_db;port=3306;password=Maroon@21?;";
@@ -402,6 +405,7 @@ namespace GradeManagementSystem
             return 1;
         }
 
+        //Get the student ID
         private int GetStudent(int enteredID)
         {
             string connStr = "server=csitmariadb.eku.edu;user=student;database=csc340_db;port=3306;password=Maroon@21?;";
@@ -438,7 +442,7 @@ namespace GradeManagementSystem
         }
 
 
-
+        //Update GPA method
         private void updateGPA(int studentID)
         {
             //List to hold all necessary info
@@ -562,6 +566,7 @@ namespace GradeManagementSystem
 
         }
 
+        //Method to insert a course into the database
         private void InsertCourse(string subjectCode, string courseNumber, string year, string season, int hours)
         {
             string connStr = "server=csitmariadb.eku.edu;user=student;database=csc340_db;port=3306;password=Maroon@21?;";
@@ -612,7 +617,7 @@ namespace GradeManagementSystem
 
         }
 
-
+        //Method to return a course CRN
         private int GetCRN(string subjectCode, string courseNumber, string year, string season)
         {
             string connStr = "server=csitmariadb.eku.edu;user=student;database=csc340_db;port=3306;password=Maroon@21?;";
