@@ -17,6 +17,7 @@ namespace GradeManagementSystem
         {
             InitializeComponent();
             SeeAll();
+            newGrade.SelectedIndex = 0;
         }
 
         private void backButton_Click(object sender, EventArgs e)

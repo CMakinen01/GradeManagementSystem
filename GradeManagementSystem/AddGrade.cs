@@ -18,6 +18,8 @@ namespace GradeManagementSystem
             InitializeComponent();
             //Add a view all students method
             SeeAll();
+            newGrade.SelectedIndex = 0;
+            season.SelectedIndex = 0;
         }
 
         private void backButton_Click(object sender, EventArgs e)
@@ -30,12 +32,52 @@ namespace GradeManagementSystem
         private void addGradeButton_Click(object sender, EventArgs e)
         {
             //handling misuse of maskedTextBoxes
+            
+            
             string fixNum = crseNumb.Text.Replace(" ", "");
+            if (fixNum == "")
+            {
+                MessageBox.Show("Fill in the Course Number Box");
+                return;
+            }
             string fixYear = year.Text.Replace(" ", "");
             string fixID = studentID.Text.Replace(" ", "");
             string crseNum = fixNum.Substring(0, 3);
             string capitalSubj = subjCode.Text.ToUpper();
             string crseHrs = hours.Text;
+
+            //input validation
+            if (fixYear == "")
+            {
+                MessageBox.Show("Fill in the Year Box");
+                return;
+            }
+            if (fixID == "")
+            {
+                MessageBox.Show("Fill in the ID Box");
+                return;
+            }
+            if (capitalSubj == "")
+            {
+                MessageBox.Show("Fill in the Course Subject Box");
+                return;
+            }
+            if (crseHrs == "")
+            {
+                MessageBox.Show("Fill in the Course Hours Box");
+                return;
+            }
+            if (newGrade == null)
+            {
+                MessageBox.Show("Fill in the Grade Box");
+                return;
+            }
+            if (season == null)
+            {
+                MessageBox.Show("Fill in the Season Box");
+                return;
+            }
+
             //Input validation for course number
             if (int.Parse(crseNum) < 100)
             {
