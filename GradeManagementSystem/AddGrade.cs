@@ -35,13 +35,14 @@ namespace GradeManagementSystem
             string fixID = studentID.Text.Replace(" ", "");
             string crseNum = fixNum.Substring(0, 3);
             string capitalSubj = subjCode.Text.ToUpper();
-            string crseHrs = crseNum.Substring(0, 1);
+            string crseHrs = hours.Text;
             //Input validation for course number
             if (int.Parse(crseNum) < 100)
             {
                 MessageBox.Show("Invalid Course Number. Please Make the number > 100.", "Course Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+            crseNum = fixNum;
 
             //Check for student existence
             string connStr = "server=csitmariadb.eku.edu;user=student;database=csc340_db;port=3306;password=Maroon@21?;";
@@ -78,7 +79,7 @@ namespace GradeManagementSystem
             int check = 0;
             try
             {
-                
+
                 string checkCourseQuery = "SELECT * FROM courseinfo_camden440 WHERE subj_code = @subj AND crse_numb = @crse AND year = @year AND season = @season";
                 MySqlCommand cmdCheckCourse = new MySqlCommand(checkCourseQuery, conn);
                 cmdCheckCourse.Parameters.AddWithValue("@subj", capitalSubj);
@@ -107,7 +108,8 @@ namespace GradeManagementSystem
 
 
             //Insert into Course table
-            if (check != 1){
+            if (check != 1)
+            {
                 try
                 {
 
@@ -130,7 +132,7 @@ namespace GradeManagementSystem
                     return;
                 }
             }
-            
+
 
             //Retrieve the CRN from the CourseInfo table
             long crn = 0;
@@ -242,7 +244,7 @@ namespace GradeManagementSystem
             string fixID = studentID.Text.Replace(" ", "");
             //search the DB, if the student does not exist, exit process
             string connStr = "server=csitmariadb.eku.edu;user=student;database=csc340_db;port=3306;password=Maroon@21?;";
-            string query = "SELECT * FROM studentInfo_Camden440 LEFT JOIN grades_Camden440 ON studentInfo_Camden440.student_id = grades_Camden440.student_id LEFT JOIN courseInfo_Camden440 ON grades_Camden440.crn = courseInfo_Camden440.crn WHERE studentInfo_Camden440.student_id = @studentID";
+            string query = "SELECT * FROM studentInfo_Camden440 LEFT JOIN grades_Camden440 ON studentInfo_Camden440.student_id = grades_Camden440.student_id LEFT JOIN courseInfo_Camden440 ON grades_Camden440.crn = courseInfo_Camden440.crn LEFT JOIN importedid_Camden440 ON importedid_Camden440.student_id = studentInfo_Camden440.student_id WHERE studentInfo_Camden440.student_id = @studentID";
             MySql.Data.MySqlClient.MySqlConnection conn = new MySql.Data.MySqlClient.MySqlConnection(connStr);
             try
             {
@@ -256,7 +258,7 @@ namespace GradeManagementSystem
                     while (reader.Read())
                     {
 
-                        sb.AppendLine($"ID: {reader.GetInt32(0)}    Name: {reader.GetString(1)}  GPA: {reader.GetDouble(2)}    Course: {reader.GetString(7)} {reader.GetString(8)}     Taken: {reader.GetString(10)} {reader.GetInt16(9)}");
+                        sb.AppendLine($"ID: {reader.GetInt32(0)}    Excel ID: {reader.GetInt32(12)}    Name: {reader.GetString(1)}  GPA: {reader.GetDouble(2)}    Course: {reader.GetString(7)} {reader.GetString(8)}     Taken: {reader.GetString(10)} {reader.GetInt16(9)}");
                     }
                     reader.Close();
                     allGrades.Text = sb.ToString();
@@ -330,7 +332,7 @@ namespace GradeManagementSystem
                         }
                     }
                 }
-                
+
             }
             catch (Exception ex)
             {
@@ -382,7 +384,7 @@ namespace GradeManagementSystem
 
                 Console.WriteLine("Connecting to MySQL...");
                 conn.Open();
-                
+
 
                 MySqlCommand cmd = new MySqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@ID", fixID);
@@ -409,7 +411,7 @@ namespace GradeManagementSystem
             string fixID = studentID.Text.Replace(" ", "");
             //search the DB, if the student does not exist, exit process
             string connStr = "server=csitmariadb.eku.edu;user=student;database=csc340_db;port=3306;password=Maroon@21?;";
-            string query = "SELECT * FROM studentInfo_Camden440";
+            string query = "SELECT * FROM studentInfo_Camden440 LEFT JOIN importedid_Camden440 ON importedid_Camden440.student_id = studentInfo_Camden440.student_id ";
             MySql.Data.MySqlClient.MySqlConnection conn = new MySql.Data.MySqlClient.MySqlConnection(connStr);
             try
             {
@@ -422,7 +424,7 @@ namespace GradeManagementSystem
                     while (reader.Read())
                     {
 
-                        sb.AppendLine($"ID: {reader.GetInt32(0)}         Name: {reader.GetString(1)}");
+                        sb.AppendLine($"ID: {reader.GetInt32(0)}    Excel ID: {reader.GetInt32(3)}         Name: {reader.GetString(1)}");
                     }
                     reader.Close();
                     allGrades.Text = sb.ToString();
@@ -439,7 +441,10 @@ namespace GradeManagementSystem
             }
         }
 
+        private void hours_MaskInputRejected(object sender, MaskInputRejectedEventArgs e)
+        {
 
+        }
     }
 }
 

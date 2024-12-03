@@ -32,7 +32,7 @@ namespace GradeManagementSystem
             string fixID = studentID.Text.Replace(" ", "");
             //search the DB, if the student does not exist, exit process
             string connStr = "server=csitmariadb.eku.edu;user=student;database=csc340_db;port=3306;password=Maroon@21?;";
-            string query = "SELECT * FROM studentInfo_Camden440 LEFT JOIN grades_Camden440 ON studentInfo_Camden440.student_id = grades_Camden440.student_id LEFT JOIN courseInfo_Camden440 ON grades_Camden440.crn = courseInfo_Camden440.crn WHERE studentInfo_Camden440.student_id = @studentID";
+            string query = "SELECT * FROM studentInfo_Camden440 LEFT JOIN grades_Camden440 ON studentInfo_Camden440.student_id = grades_Camden440.student_id LEFT JOIN courseInfo_Camden440 ON grades_Camden440.crn = courseInfo_Camden440.crn LEFT JOIN importedid_Camden440 ON importedid_Camden440.student_id = studentInfo_Camden440.student_id WHERE studentInfo_Camden440.student_id = @studentID";
             MySql.Data.MySqlClient.MySqlConnection conn = new MySql.Data.MySqlClient.MySqlConnection(connStr);
             try
             {
@@ -46,7 +46,7 @@ namespace GradeManagementSystem
                     while (reader.Read())
                     {
 
-                        sb.AppendLine($"ID: {reader.GetInt32(0)}    CRN: {reader.GetInt32(3)}    Name: {reader.GetString(1)}  GPA: {reader.GetDouble(2)}    Course: {reader.GetString(7)} {reader.GetString(8)}     Taken: {reader.GetString(10)} {reader.GetInt16(9)}");
+                        sb.AppendLine($"ID: {reader.GetInt32(0)}    Excel ID: {reader.GetInt32(12)}    Name: {reader.GetString(1)}  GPA: {reader.GetDouble(2)}    Course: {reader.GetString(7)} {reader.GetString(8)}     Taken: {reader.GetString(10)} {reader.GetInt16(9)}");
                     }
                     reader.Close();
                     allGrades.Text = sb.ToString();
@@ -343,7 +343,7 @@ namespace GradeManagementSystem
             string fixID = studentID.Text.Replace(" ", "");
             //search the DB, if the student does not exist, exit process
             string connStr = "server=csitmariadb.eku.edu;user=student;database=csc340_db;port=3306;password=Maroon@21?;";
-            string query = "SELECT * FROM studentInfo_Camden440";
+            string query = "SELECT * FROM studentInfo_Camden440 LEFT JOIN importedid_Camden440 ON importedid_Camden440.student_id = studentInfo_Camden440.student_id ";
             MySql.Data.MySqlClient.MySqlConnection conn = new MySql.Data.MySqlClient.MySqlConnection(connStr);
             try
             {
@@ -356,7 +356,7 @@ namespace GradeManagementSystem
                     while (reader.Read())
                     {
 
-                        sb.AppendLine($"ID: {reader.GetInt32(0)}         Name: {reader.GetString(1)}");
+                        sb.AppendLine($"ID: {reader.GetInt32(0)}    Excel ID: {reader.GetInt32(3)}         Name: {reader.GetString(1)}");
                     }
                     reader.Close();
                     allGrades.Text = sb.ToString();

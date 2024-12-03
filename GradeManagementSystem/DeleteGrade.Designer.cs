@@ -41,7 +41,7 @@
             // backButton
             // 
             backButton.ForeColor = Color.Red;
-            backButton.Location = new Point(583, 214);
+            backButton.Location = new Point(683, 214);
             backButton.Margin = new Padding(2);
             backButton.Name = "backButton";
             backButton.Size = new Size(140, 45);
@@ -100,7 +100,7 @@
             allGrades.Name = "allGrades";
             allGrades.ReadOnly = true;
             allGrades.ScrollBars = ScrollBars.Both;
-            allGrades.Size = new Size(506, 183);
+            allGrades.Size = new Size(606, 183);
             allGrades.TabIndex = 28;
             // 
             // enteredCRN
@@ -127,7 +127,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(734, 270);
+            ClientSize = new Size(834, 270);
             Controls.Add(label1);
             Controls.Add(enteredCRN);
             Controls.Add(allGrades);

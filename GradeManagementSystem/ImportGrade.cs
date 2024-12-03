@@ -190,7 +190,7 @@ namespace GradeManagementSystem
                             cmdInsertImportedId.Parameters.AddWithValue("@EnteredID", studentID);
 
                             cmdInsertImportedId.ExecuteNonQuery();
-                            MessageBox.Show($"Student ID {studentID} added successfully.");
+                            MessageBox.Show($"Student ID {studentID} added successfully with database ID {generatedID}.");
                         }
                         catch (Exception ex)
                         {
@@ -253,7 +253,7 @@ namespace GradeManagementSystem
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Insert grade error per student: " + ex.Message);
+                    MessageBox.Show("Insert grade error per student or duplicate: " + ex.Message);
                 }
 
                 updateGPA(id);

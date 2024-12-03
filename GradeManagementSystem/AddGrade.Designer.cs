@@ -53,7 +53,7 @@ namespace GradeManagementSystem
             // backButton
             // 
             backButton.ForeColor = Color.Red;
-            backButton.Location = new Point(583, 219);
+            backButton.Location = new Point(682, 219);
             backButton.Margin = new Padding(2);
             backButton.Name = "backButton";
             backButton.Size = new Size(140, 45);
@@ -208,7 +208,7 @@ namespace GradeManagementSystem
             allGrades.Name = "allGrades";
             allGrades.ReadOnly = true;
             allGrades.ScrollBars = ScrollBars.Both;
-            allGrades.Size = new Size(506, 183);
+            allGrades.Size = new Size(606, 183);
             allGrades.TabIndex = 24;
             // 
             // hours
@@ -218,6 +218,7 @@ namespace GradeManagementSystem
             hours.Name = "hours";
             hours.Size = new Size(42, 23);
             hours.TabIndex = 25;
+            hours.MaskInputRejected += hours_MaskInputRejected;
             // 
             // label7
             // 
@@ -233,7 +234,7 @@ namespace GradeManagementSystem
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(734, 270);
+            ClientSize = new Size(834, 270);
             Controls.Add(label7);
             Controls.Add(hours);
             Controls.Add(allGrades);
