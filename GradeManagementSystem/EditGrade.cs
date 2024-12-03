@@ -268,7 +268,7 @@ namespace GradeManagementSystem
                     while (reader.Read())
                     {
 
-                        sb.AppendLine($"ID: {reader.GetInt32(0)}    Excel ID: {reader.GetInt32(12)}    Name: {reader.GetString(1)}  GPA: {reader.GetDouble(2)}    Course: {reader.GetString(7)} {reader.GetString(8)}     Taken: {reader.GetString(10)} {reader.GetInt16(9)}");
+                        sb.AppendLine($"ID: {reader.GetInt32(0)}     CRN: {reader.GetInt32(3)}    Name: {reader.GetString(1)}  GPA: {reader.GetDouble(2)}    Course: {reader.GetString(7)} {reader.GetString(8)}     Taken: {reader.GetString(10)} {reader.GetInt16(9)}     Grade: {reader.GetString(4)}");
                     }
                     reader.Close();
                     allGrades.Text = sb.ToString();
